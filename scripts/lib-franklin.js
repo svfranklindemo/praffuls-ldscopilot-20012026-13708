@@ -260,16 +260,27 @@ export function decorateBlock(block) {
   const blocks = document.querySelectorAll(`.${shortBlockName}`);
   blocks.forEach((block, index) => {
     block.id = `${shortBlockName}-${index}`;
-    
-    // Add indexed IDs to images within the block
-    const images = block.querySelectorAll('img');
-    images.forEach((img, imgIndex) => {
-      const imgId = `${shortBlockName}_${index}_image_${imgIndex}`;
-      img.id = imgId;
-    });
+
+    const manageHeaderFooter = ['header', 'footer'];
+
+    if(manageHeaderFooter.includes(shortBlockName)){
+      // Add indexed IDs to images within the block
+      const images = block.querySelectorAll('img');
+      images.forEach((img, imgIndex) => {
+        const imgId = `section_${index}_image_${imgIndex}`;
+        img.id = imgId;
+      });
+    } else {
+      // Add indexed IDs to images within the block
+      const images = block.querySelectorAll('img');
+      images.forEach((img, imgIndex) => {
+        const imgId = `${shortBlockName}_${index}_image_${imgIndex}`;
+        img.id = imgId;
+      });
+    }
 
     const blocksWithCustomIDs = ['carousel'];
-    if (!blocksWithCustomIDs.includes(shortBlockName)) {
+    if (!blocksWithCustomIDs.includes(shortBlockName) && !manageHeaderFooter.includes(shortBlockName)) {
       // Merge headings (h1-h6) and paragraphs into a single loop for efficiency
       ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].forEach((tag) => {
         const elements = block.querySelectorAll(tag);
@@ -277,7 +288,16 @@ export function decorateBlock(block) {
           el.id = `${shortBlockName}_${index}_${tag}_${elIndex}`;
         });
       });
+    } else if(manageHeaderFooter.includes(shortBlockName)){
+      // Merge headings (h1-h6) and paragraphs into a single loop for efficiency
+      ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].forEach((tag) => {
+        const elements = block.querySelectorAll(tag);
+        elements.forEach((el, elIndex) => {
+          el.id = `section_${index}_content_${index}_${tag}_${elIndex}`;
+        });
+      });
     }
+
   });
 }
 
